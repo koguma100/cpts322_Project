@@ -1,17 +1,33 @@
 import { useRouter } from 'next/router';
-import Button from '../components/Button'
+import { supabase } from '../utils/supabase';
+import { useState, useEffect } from 'react';
 
-export default function Login() {
+export default function index() {
     const router = useRouter();
+    const [user, setUser] = useState(null);
 
-    const handleLogin = () => {
-        // do login stuff
+    useEffect(() => {
+      const checkUser = async () => {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+  
+        setUser(user);
+      };
+
+      checkUser();
+
+      if (user == null)
+      {
+        router.push("/login");
+      }
+      else {
         router.push("/home");
-    }
+      }
+
+    }, [])
     return (
-      <div className="">
-        <h1>Login</h1>
-        <Button onClick={handleLogin} label="Login" size="medium"/>
+      <div className="text-blue-100">
       </div>
     );
   }
