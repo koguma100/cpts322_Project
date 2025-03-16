@@ -2,77 +2,71 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase';
 import { useRouter } from 'next/router';
+import Image from "next/image";
 import "../app/globals.css";
 
 const Login = () => {
-  const [email, setEmail] = useState(''); //Initialize Email
-  const [password, setPassword] = useState(''); //Initialize Password
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [user, setUser] = useState('');
   const router = useRouter();
 
   useEffect(() => {
     const checkUser = async () => {
       const { data, error } = await supabase.auth.getUser();
-      if (!error)
-      {
-        setUser(data.user);
+      if (!error && data.user) {
         router.push("/home");
       }
-
     };
-
-    checkUser();  
-  }, [])
+    checkUser();
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    //Check for errors
-    if (error)
-    { 
-        console.log('Error:', error.message);
-        setErrorMessage(error.message);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setErrorMessage(error.message);
+    } else {
+      router.push("/home");
     }
-    else 
-    {
-        console.log('User logged in:', data.user);
-        router.push("/home");
-    }
-  };
-  //Redirect to Signup Page
-  const handleSignupRedirect = () => {
-    router.push('/signup');
   };
 
   return (
-    <div>
-      <form onSubmit={handleLogin}>
-        <h1>Login</h1>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} //Update Email on Input
-          required //Makes Email Required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)} //Update Password on Input
-          required //Makes Password Required
-        />
-        <button type="submit">Login</button>
-      </form>
-      <p>
-        Don't have an account?{' '}
-        <button onClick={handleSignupRedirect}>Sign up</button>
-      </p>
-      {errorMessage}
+    <div className="relative flex items-center justify-center min-h-screen">
+      <Image
+        src="/Images/LEBRON.jpg"
+        alt="Background"
+        layout="fill"
+        objectFit="cover"
+        quality={100}
+        className="z-[-1] opacity-90"
+      />
+      <div className="bg-gray-900 bg-opacity-75 p-8 rounded-lg shadow-lg w-96 text-white">
+        <h1 className="text-red-700 text-4xl font-bold text-center mb-6" style={{ fontFamily: 'Prism' }}>STUFF</h1>
+        <form onSubmit={handleLogin} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
+            required
+          />
+          <button type="submit" className="w-full bg-red-800 hover:bg-red-900 text-white py-2 rounded">Login</button>
+        </form>
+        {errorMessage && <p className="text-red-800 mt-2 text-center">{errorMessage}</p>}
+        <p className="text-gray-300 text-center mt-4">
+          Don't have an account? <button onClick={() => router.push('/signup')} className="text-red-700 hover:underline">Sign up</button>
+        </p>
+      </div>
     </div>
   );
 };
