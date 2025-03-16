@@ -40,7 +40,7 @@ export default function Home() {
   return (
     <div className="MainPage">
     <Image
-      src ="/Images/background-home(2).jpg"
+      src ="/Images/LEBRON.jpg"
       alt="Background"
       layout="fill"
       objectFit="cover"
@@ -68,7 +68,7 @@ export default function Home() {
           <div className="User">
 
             {user ? (
-            <h2 className="text-2xl"> Logged in as {user.email}</h2>
+            <h2 className="text-red-500 text-2xl"> Logged in as {user.email}</h2>
              ) : (
               <p>Loading...</p>
               )}
@@ -76,9 +76,9 @@ export default function Home() {
           </div>
 
 
-          <div className="Logout absolute top-0 left-120 flex justify-center items-center w-1/4 bg-gray-200">
+          <div className="Logout absolute top-0 left-120 flex justify-center items-center w-1/4 bg-gray-500">
           
-            <button onClick={handleLogout} className="text-2xl text-center">Log out</button>
+            <button onClick={handleLogout} className="text-2xl text-center text-red-500">Log out</button>
 
           </div>
 
@@ -87,7 +87,7 @@ export default function Home() {
 
         <div className="Title absolute top-0 left-1/2 transform -translate-x-1/2 flex justify-center items-center">
 
-          <h1 className="text-7xl font-bold text-center self-center" style={{ fontFamily: 'Prism'}}>STUFF</h1>
+          <h1 className="text-red-500 text-9xl font-bold text-center self-center" style={{ fontFamily: 'Prism'}}>STUFF</h1>
 
         </div>
 
