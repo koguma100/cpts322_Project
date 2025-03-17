@@ -31,7 +31,7 @@ const Signup = () => {
     if (signUpError) {
       setErrorMessage(signUpError.message);
     } else {
-      router.push("/home");
+      router.push("/verifyEmail");
     }
   };
 
