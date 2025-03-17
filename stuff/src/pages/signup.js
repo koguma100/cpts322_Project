@@ -1,4 +1,3 @@
-// pages/signup.js
 import { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase';
 import { useRouter } from 'next/router';
@@ -45,7 +44,7 @@ const Signup = () => {
         quality={100}
         className="z-[-1] opacity-90"
       />
-      
+
       <div className="bg-gray-900 bg-opacity-75 p-8 rounded-lg shadow-lg w-96 text-white">
         <h1 className="text-red-700 text-4xl font-bold text-center mb-6" style={{ fontFamily: 'Prism' }}>STUFF</h1>
         <form onSubmit={handleSignUp} className="space-y-4">

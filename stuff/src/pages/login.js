@@ -1,4 +1,3 @@
-// pages/login.js
 import { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase';
 import { useRouter } from 'next/router';
@@ -64,7 +63,7 @@ const Login = () => {
           />
 
           <button type="submit" className="w-full bg-red-800 hover:bg-red-900 text-white py-2 rounded">Login</button>
-          
+
         </form>
         {errorMessage && <p className="text-red-800 mt-2 text-center">{errorMessage}</p>}
         <p className="text-gray-300 text-center mt-4">
