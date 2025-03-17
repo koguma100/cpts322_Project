@@ -45,6 +45,7 @@ const Signup = () => {
         quality={100}
         className="z-[-1] opacity-90"
       />
+      
       <div className="bg-gray-900 bg-opacity-75 p-8 rounded-lg shadow-lg w-96 text-white">
         <h1 className="text-red-700 text-4xl font-bold text-center mb-6" style={{ fontFamily: 'Prism' }}>STUFF</h1>
         <form onSubmit={handleSignUp} className="space-y-4">
@@ -56,6 +57,7 @@ const Signup = () => {
             className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
             required
           />
+
           <input
             type="email"
             placeholder="Email"
@@ -64,6 +66,7 @@ const Signup = () => {
             className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
             required
           />
+
           <input
             type="password"
             placeholder="Password"
@@ -72,6 +75,7 @@ const Signup = () => {
             className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
             required
           />
+
           <button type="submit" className="w-full bg-red-800 hover:bg-red-900 text-white py-2 rounded">Sign Up</button>
         </form>
         {errorMessage && <p className="text-red-500 mt-2 text-center">{errorMessage}</p>}
