@@ -1,100 +1,87 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase';
 import { useRouter } from 'next/router';
+import Image from "next/image";
 import "../app/globals.css";
 
 const Signup = () => {
-  const [email, setEmail] = useState(''); //Initialize Email
-  const [password, setPassword] = useState(''); //Initialize Password
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [user, setUser] = useState(null);
   const router = useRouter();
 
-  // checks is a user is already logged in on load
-   useEffect(() => {
-        const checkUser = async () => {
-          const { data, error } = await supabase.auth.getUser();
-          if (error) console.error("Error fetching user:", error.message);
-          else 
-          {
-            setUser(data.user);
-            router.push("/home");
-          }
-    
-        };
-  
-        checkUser();  
-      }, [])
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (!error && data.user) {
+        router.push("/home");
+      }
+    };
+    checkUser();
+  }, []);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    //Call Signup to make a new user
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
     });
-
-    setUser(signUpData.user);
-    //Check for Errors
-    if (signUpError) 
-    {
-        console.log('Error:', signUpError.message);
-        setErrorMessage(signUpError.message);
+    if (signUpError) {
+      setErrorMessage(signUpError.message);
+    } else {
+      router.push("/verifyEmail");
     }
-    else {  // update username NOT WORKING YET !!!!
-        console.log('User signed up:', signUpData.user);
-        const { data: profileData, error: profileError } = await supabase
-          .from("Profile") // Table name
-          .update({ username: username }) // New value
-          .eq("id", signUpData.user.id); // Ensure only the authenticated user updates their own record
-
-        if (profileError) {
-          console.error("Error updating username:", profileError);
-        } else {
-          console.log("Username updated successfully:", profileData);
-        }
-        router.push("/home");
-
-    }
-  };
-  //Redirect to Signup Page
-  const handleLoginRedirect = () => {
-    router.push('/login');
   };
 
   return (
-    <div>
-      <form onSubmit={handleSignUp}>
-        <h1>Sign Up</h1>
-        <input
-          type="username"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)} //Update Username on Input
-          required //Makes Username Required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} //Update Email on Input
-          required //Makes Email Required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)} //Update Password on Input
-          required //Makes Password Required
-        />
-        <button type="submit">Sign Up</button>
-      </form>
-      <p>
-        Have an account?{' '}
-        <button onClick={handleLoginRedirect}>log in</button>
-      </p>
-      {errorMessage}
+    <div className="relative flex items-center justify-center min-h-screen">
+      <Image
+        src="/Images/LEBRON.jpg"
+        alt="Background"
+        layout="fill"
+        objectFit="cover"
+        quality={100}
+        className="z-[-1] opacity-90"
+      />
+
+      <div className="bg-gray-900 bg-opacity-75 p-8 rounded-lg shadow-lg w-96 text-white">
+        <h1 className="text-red-700 text-4xl font-bold text-center mb-6" style={{ fontFamily: 'Prism' }}>STUFF</h1>
+        <form onSubmit={handleSignUp} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
+            required
+          />
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
+            required
+          />
+
+          <button type="submit" className="w-full bg-red-800 hover:bg-red-900 text-white py-2 rounded">Sign Up</button>
+        </form>
+        {errorMessage && <p className="text-red-500 mt-2 text-center">{errorMessage}</p>}
+        <p className="text-gray-300 text-center mt-4">
+          Have an account? <button onClick={() => router.push('/login')} className="text-red-700 hover:underline">Log in</button>
+        </p>
+      </div>
     </div>
   );
 };
