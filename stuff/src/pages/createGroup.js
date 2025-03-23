@@ -15,6 +15,7 @@ export default function CreateGroup() {
     const [image, setImage] = useState(null);
     const [sportsOptions, setSportsOptions] = useState([]);
     const [user, setUser] = useState(null);
+    const [error, setError] = useState(null);
 
     const router = useRouter();
 
@@ -68,18 +69,66 @@ export default function CreateGroup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        let imageUrl = null;
+        const { name, image, description, sport, location } = formData;
+
         // first add image to storage if used
-        if (formData.image) {
+        if (image) {
             const { data, error } = await supabase.storage
                 .from('group-images') // Bucket name
-                .upload(`group-${Date.now()}-${formData.image.name}`, formData.image);
+                .upload(`group-${Date.now()}-${formData.name}`, image);
 
             if (error) {
                 console.error('Error uploading image:', error);
-                alert('Failed to upload image.');
+                setError('Failed to upload image.');
                 return;
             }
+
+            // Get the public URL of the uploaded image
+            if (data?.path) {
+                const { data: publicData } = supabase.storage
+                .from('group-images')
+                .getPublicUrl(data.path);
+                imageUrl = publicData.publicUrl;
+            }
+            
         }
+
+        const { data, error } = await supabase.from("group").insert([
+            {
+                name: name,
+                description: description,
+                sport: sport,
+                location: location,
+                image: imageUrl, // If an image was uploaded, add the URL
+            },
+        ]);
+
+        if (error) {
+            console.error('Error inserting group data:', error);
+            setError('Failed to create group.');
+            return;
+        }
+
+        const { error: memberError } = await supabase.from('groupMember').insert([
+            {
+              group: name, 
+              user_id: user.id, 
+              isLeader: true, 
+            },
+          ]);
+        
+          if (memberError) {
+            console.error('Error inserting group member:', memberError);
+            setError('Failed to add group member.');
+            return;
+        }
+
+        console.log('Group created successfully:', data);
+        router.push({
+            pathname: "/group",
+            query: { name: name },
+        }); 
     };
 
     return (
@@ -211,6 +260,7 @@ export default function CreateGroup() {
                         Cancel
                     </button>
                 </div>
+                <div className="text-center text-red-700">{error}</div>
 
             </form>
         </div>
