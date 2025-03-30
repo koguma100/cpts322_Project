@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase';
 import { useRouter } from 'next/router';
 import Image from "next/image";
+import SearchBar from "./searchBar";
 
 
 export default function Home() {
@@ -93,12 +94,10 @@ export default function Home() {
 
       </div>
 
-      <div className="Actions flex flex-col xl:w-1/4 lg:w-1/5 md:w-1/6 sm:w-1/7 w-1/8 xl:gap-10 lg:gap-8 md:gap-6 sm:gap-4 gap-2 items-center p-4 lx:mx-50 lg:mx-40 md:mx-30 sm:mx-20 mx-10 lx:my-25 lg:my-20 md:my-15 sm:my-10 bg-gray-900/75  rounded">
-
-        <div className="Logout flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
-          
-          <button className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >Search</button>
-
+      <div className="Actions flex flex-col xl:w-1/4 lg:w-1/5 md:w-1/6 sm:w-1/7 w-1/8 xl:gap-10 lg:gap-8 md:gap-6 sm:gap-4 gap-2 items-center p-4 lx:mx-50 lg:mx-40 md:mx-30 sm:mx-20 mx-10 lx:my-25 lg:my-20 md:my-15 sm:my-10 bg-gray-900/75 rounded">
+        {/* Render the SearchBar Component here */}
+        <div className="SearchBar flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
+          <SearchBar /> {/* This is where the SearchBar is now being rendered */}
         </div>
 
         <div className="Logout flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
