@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { supabase } from '../utils/supabase'; 
+import { supabase } from '../utils/supabase';
 
 export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,18 +12,18 @@ export default function SearchBar() {
 
     // Query Supabase to search for the username
     const { data, error } = await supabase
-      .from("profile") 
-      .select("username")
-      .ilike("username", `%${searchQuery}%`); 
+      .from("profile")  // Search in the 'profile' table
+      .select("id, username")
+      .ilike("username", `%${searchQuery}%`);  // Search using 'ilike' for partial matching
 
     if (error) {
       console.error("Error searching for user:", error.message);
       return;
     }
 
-    // If the user is found, navigate to their profile
+    // If the user is found, navigate to their profile with the id
     if (data && data.length > 0) {
-      router.push(`/profile?username=${data[0].username}`);
+      router.push(`/profile?id=${data[0].id}`);  // Pass id as query parameter
     } else {
       alert("User not found");
     }
