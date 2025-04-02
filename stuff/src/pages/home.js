@@ -159,7 +159,7 @@ export default function Home() {
 
         <div className="Logout flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
           
-          <button onClick={handleViewGroup} className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >Messages</button>
+          <button className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >Messages</button>
 
         </div>
 
