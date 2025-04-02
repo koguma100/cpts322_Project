@@ -11,6 +11,8 @@ export default function GroupPage() {
     const [loading, setLoading] = useState(true);
     const [members, setMembers] = useState([]);
     const [user, setUser] = useState(null);
+    const [profiles, setProfiles] = useState([]);
+    const [processedMembers, setProcessedMembers] = useState([]);
 
 
     useEffect(() => {
@@ -32,7 +34,7 @@ export default function GroupPage() {
         };
 
         const fetchMembers = async () => { //fetch members of group
-
+            setLoading(true);
             const { data, error } = await supabase
                 .from("groupMember")
                 .select("*")
@@ -43,10 +45,11 @@ export default function GroupPage() {
             } else {
                 setMembers(data);
         }
+        setLoading(false);
         };
 
 
-        const fetchGroupData = async () => { //fetch group's info -- CURRENTLY BREAKS AFTER REFRESH
+        const fetchGroupData = async () => { //fetch group's info 
             setLoading(true);
             const { data, error } = await supabase
                 .from("group")
@@ -64,12 +67,56 @@ export default function GroupPage() {
 
         fetchMembers();
         fetchGroupData();
-    }, []);
+    }, [name]);
+    
+    useEffect(() => {
+
+        const fetchProfiles = async () => { //fetch members of group's profiles for username
+            setLoading(true);
+            const { data, error } = await supabase
+                .from("profile")
+                .select("*")
+                .in("id", (members.map((groupMember) => groupMember.user_id)))
+        
+            if (error) {
+                console.error("Error fetching members:", error);
+            } else {
+                setProfiles(data);
+        }
+        setLoading(false);
+        };
+
+        
+        fetchProfiles();
+    }, [members]);
+
+    useEffect(() => {
+        if (members.length > 0 && profiles.length > 0) {
+            const mergedMembers = members.map((member) => {  //Combines each user's profile with their member profile ...
+                const profile = profiles.find((p) => p.id === member.user_id);     //so that isLeader and username can both be found
+                return {
+                    user_id: member.user_id,
+                    username: profile ? profile.email : "Unknown", // Displays "Unknown" if profile is unable to be found for member
+                    isLeader: member.isLeader, 
+                };
+            });
+    
+            setProcessedMembers(mergedMembers); // Save processed members to state
+        }
+    }, [members, profiles]);
+
+
     
 
     if (loading) return <p className="text-center text-gray-400">Loading group...</p>; //ensures group and member data is loaded before returning screen
     if (!groupData) return <p className="text-center text-red-500">Group not found</p>;
 
+
+
+
+   
+
+    
     return (    
         <div 
             className="relative min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6"
@@ -104,20 +151,32 @@ export default function GroupPage() {
                 {/* Members Section */}
                 <h2 className="text-2xl font-bold mt-6 mb-4 text-red-500">Group Members</h2>
     
-                {members.length === 0 ? (
+                <div className="flex flex-col gap-2">
+                    {processedMembers.length === 0 ? (
+
                     <p className="text-gray-400">No Members.</p>
-                ) : (
-                    <div className="flex flex-col gap-2">
-                        {members.map((member) => (
+
+                    ) : ( //for each member
+                            
+                             processedMembers.map((member) => (
                             <p
                                 key={member.user_id}
-                                className="bg-red-800 hover:bg-red-900 text-white py-2 px-4 rounded transition font-semibold"
+                                className="bg-red-800 hover:bg-red-900 text-white py-2 px-4 rounded transition font-semibold flex justify-between items-center"
                             >
-                                {member.user_id}
+                                {/* Username */}
+                            <span>{member.username}</span> 
+
+                                {/* Is leader */}
+                            {member.isLeader && (
+
+                                <span className="ml-2 text-white font-bold">(Leader)</span>
+
+                            )}
                             </p>
-                        ))}
-                    </div>
-                )}
+                        ))
+                    )}
+                </div>
+
     
                 {/* Back Button */}
                 <button
