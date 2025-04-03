@@ -79,7 +79,8 @@ export default function Home() {
           <div className="User flex">
 
             {user ? (
-            <p className="text-xs text-gray-500 font-bold"> Logged in as {user.email}</p>
+            
+            <a href={`/profile?id=${user.id}`} class="button-link" className="text-xs text-gray-500 font-bold">Logged in as {user.email}</a>
              ) : (
               <p>Loading...</p>
               )}
