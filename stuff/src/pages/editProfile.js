@@ -169,6 +169,7 @@ export default function EditProfile() {
                         type="button"
                         onClick={() => {
                             handleProfileUpdate();
+                            alert("Profile Updated!")
                             handleProfilePicUpload();
                         }}
                         className="px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900"
