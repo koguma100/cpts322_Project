@@ -73,9 +73,9 @@ export default function Home() {
 
           </div>
 
-          <div className="Logout flex justify-center items-center w-1/2 bg-red-800 hover:bg-red-900 rounded">
+          <div className="Edit Profile flex justify-center items-center w-1/2 bg-red-800 hover:bg-red-900 rounded">
           
-          <button className="text-base text-center text-white">Edit Profile</button>
+          <button onClick={() => router.push('/editProfile')} className="text-base text-center text-white">Edit Profile</button>
 
           </div>
 
