@@ -45,11 +45,9 @@ export default function Home() {
   }
 
   const handleEditProfile = () => {
-
     router.push("/editProfile");
-
   }
-
+  
   const handleViewGroup = () => {
 
     router.push("/viewGroup");
@@ -105,9 +103,7 @@ export default function Home() {
           {/*Edit profile button*/}
 
           <div className="Logout flex justify-center items-center w-1/2 bg-red-800 hover:bg-red-900 rounded">
-          
             <button onClick={handleEditProfile} className="text-base text-center text-white">Edit Profile</button>
-
           </div>
 
 
