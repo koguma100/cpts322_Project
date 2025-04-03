@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase'; // Ensure this is correct
 import { useRouter } from 'next/router';
 import Image from "next/image";
+import "../app/globals.css";
 
 export default function EditProfile() {
     const [user, setUser] = useState(null);
