@@ -7,11 +7,11 @@ import "../app/globals.css";
 export default function EditProfile() {
     const [user, setUser] = useState(null);
     const [username, setUsername] = useState('');
-    const [dob, setDob] = useState('');
+    const [DOB, setDOB] = useState('');
     const [bio, setBio] = useState('');
     const [location, setLocation] = useState('');
     const [profilePic, setProfilePic] = useState('');
-    const [imageFile, setImageFile] = useState(null);  // New state for file
+    const [imageFile, setImageFile] = useState(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -26,27 +26,11 @@ export default function EditProfile() {
 
                 setUser(user);
                 setUsername(profile?.username || '');
-                setDob(profile?.dob || '');
+                setDOB(profile?.DOB || '');
                 setBio(profile?.bio || '');
                 setLocation(profile?.location || '');
                 setProfilePic(profile?.profilePicture || '');
             }
-            const checkUser = async () => {
-                const { data, error} = await supabase.auth.getSession()
-          
-                if (error) {
-                  // Safely check for error before accessing message
-                  console.error("Error fetching user:", error?.message);
-                  router.push("/login");
-                } else if (!data?.session?.user) {
-                  router.push("/login"); // If no user in session, redirect to login
-                } else {
-                  setUser(data.session.user); // The user object is in data.session.user
-                }
-          
-              };
-          
-            checkUser();
         }
         fetchUser();
     }, []);
@@ -56,17 +40,17 @@ export default function EditProfile() {
         if (file) {
             setImageFile(file);
             const reader = new FileReader();
-            reader.onload = () => setProfilePic(reader.result);  // Preview the selected image
+            reader.onload = () => setProfilePic(reader.result);
             reader.readAsDataURL(file);
         }
     };
 
     const handleProfilePicUpload = async () => {
-        if (!imageFile) return;
+        if (!imageFile || !user) return;
 
         try {
             const { data, error } = await supabase.storage
-                .from('profile-pics') // Ensure this is the correct bucket name
+                .from('profile-pics')
                 .upload(`public/${user.id}-${Date.now()}`, imageFile, { upsert: true });
 
             if (error) {
@@ -74,7 +58,6 @@ export default function EditProfile() {
                 return;
             }
 
-            // Get the public URL of the uploaded image
             const { data: publicData, error: urlError } = await supabase.storage
                 .from('profile-pics')
                 .getPublicUrl(data.path);
@@ -84,32 +67,51 @@ export default function EditProfile() {
                 return;
             }
 
-            // Update the profile with the new image URL
             const { error: updateError } = await supabase
-                .from('profile')  // Ensure this matches the correct table name
+                .from('profile')
                 .update({ profilePicture: publicData.publicUrl })
                 .eq('id', user.id);
 
             if (updateError) {
                 console.error('Error updating profile picture:', updateError);
             } else {
-                setProfilePic(publicData.publicUrl); // Update the state with the new profile picture URL
+                setProfilePic(publicData.publicUrl);
             }
         } catch (err) {
             console.error('Failed to upload image:', err.message);
         }
     };
 
+    const handleProfileUpdate = async () => {
+        if (!user) return;
+
+        const { error } = await supabase
+            .from('profile')
+            .update({
+                username,
+                DOB,
+                bio,
+                location,
+            })
+            .eq('id', user.id);
+
+        if (error) {
+            console.error('Error updating profile:', error);
+        } else {
+            console.log('Profile updated successfully');
+        }
+    };
+
     return (
         <div className="bg-gray-800 bg-opacity-100 max-w-lg mx-auto mt-10 p-6 rounded-lg">
-                <Image
-                  src ="/Images/LEBRON.jpg"
-                  alt="Background"
-                  layout="fill"
-                  objectFit="cover"
-                  quality={100}
-                  className="z-[-1] opacity-90"
-                  />
+            <Image
+                src="/Images/LEBRON.jpg"
+                alt="Background"
+                layout="fill"
+                objectFit="cover"
+                quality={100}
+                className="z-[-1] opacity-90"
+            />
             <h2 className="block text-gray-400 text-center text-2xl font-bold mb-4">Edit Profile</h2>
             <form onSubmit={(e) => e.preventDefault()}>
                 <div className="mb-4">
@@ -126,8 +128,8 @@ export default function EditProfile() {
                     <label className="block text-gray-400">Date of Birth</label>
                     <input
                         type="date"
-                        value={dob}
-                        onChange={(e) => setDob(e.target.value)}
+                        value={DOB}
+                        onChange={(e) => setDOB(e.target.value)}
                         className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
                     />
                 </div>
@@ -162,20 +164,24 @@ export default function EditProfile() {
                     {profilePic && <img src={profilePic} alt="Profile" className="mt-2 w-24 h-24 rounded-full" />}
                 </div>
 
-                
-
-                <div className="flex justify-between w-full">
+                <div className="flex w-full">
                     <button
                         type="button"
-                        onClick={handleProfilePicUpload}
+                        onClick={() => {
+                            handleProfileUpdate();
+                            handleProfilePicUpload();
+                        }}
                         className="px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900"
-                        >Save Changes
+                    >
+                        Save Changes
                     </button>
+                    
                     <button
                         type="button"
-                        onClick={() => router.push('/signup')}
-                        className="px-3 py-2 bg-red-800 text-white rounded-lg hover:bg-red-900"
-                        >Home
+                        onClick={() => router.push('/')}
+                        className="px-3 py-2 bg-red-800 text-white rounded-lg hover:bg-red-900 ml-auto"
+                    >
+                        Home
                     </button>
                 </div>
             </form>
