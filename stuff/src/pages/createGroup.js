@@ -125,10 +125,7 @@ export default function CreateGroup() {
         }
 
         console.log('Group created successfully:', data);
-        router.push({
-            pathname: "/group",
-            query: { name: name },
-        }); 
+        router.push(`/group/${name}`);
     };
 
     return (
