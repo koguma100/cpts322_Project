@@ -2,8 +2,8 @@ import "../app/globals.css";
 import { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase';
 import { useRouter } from 'next/router';
+import { CreateGroup } from '../pages/createGroup';
 import Image from "next/image";
-import SearchBar from "./searchBar";
 
 
 export default function Home() {
@@ -38,6 +38,24 @@ export default function Home() {
     }
   };
 
+  const handleCreateGroup = () => {
+
+    router.push("/createGroup");
+
+  }
+
+  const handleEditProfile = () => {
+
+    router.push("/editProfile");
+
+  }
+
+  const handleViewGroup = () => {
+
+    router.push("/viewGroup");
+
+  }
+
   return (
     <div className="MainPage">
     <Image
@@ -49,12 +67,17 @@ export default function Home() {
       className="z-[-1]"
       />
 
+      {/*Horizontal layout containing user info and Title*/}
       <div className="Title and User Info flex justify-between w-full">
 
 
-
+        {/*Verticle layout containing user info*/}
         <div className="User Info flex flex-col w-1/9 sm:w-1/8 md:w-1/7 lg:w-1/6 xl:w-1/5 gap-4 justify-start items-center p-0 sm:p-1 md:p-2 lg:p-3 xl:p-4 m-4 bg-gray-900/75 rounded">
           
+
+
+
+          {/*Logged in as*/}
           <div className="User flex">
 
             {user ? (
@@ -65,27 +88,40 @@ export default function Home() {
 
           </div>
 
+
+
+        {/*Log out button*/}
         <div className="Logout flex gap-2 w-full justify-center">
 
           <div className="Logout flex justify-center items-center w-1/2 bg-red-800 hover:bg-red-900 rounded">
           
-          <button onClick={handleLogout} className="text-base text-center text-white">Log out</button>
+            <button onClick={handleLogout} className="text-base text-center text-white">Log out</button>
 
           </div>
 
-          <div className="Edit Profile flex justify-center items-center w-1/2 bg-red-800 hover:bg-red-900 rounded">
+
+
+
+          {/*Edit profile button*/}
+
+          <div className="Logout flex justify-center items-center w-1/2 bg-red-800 hover:bg-red-900 rounded">
           
-          <button onClick={() => router.push('/editProfile')} className="text-base text-center text-white">Edit Profile</button>
+            <button onClick={handleEditProfile} className="text-base text-center text-white">Edit Profile</button>
 
           </div>
 
+
+
+
+         </div>
+
         </div>
 
 
 
 
-        </div>
 
+              {/*Title*/}
         <div className="Title absolute top-0 left-1/2 transform -translate-x-1/2 flex justify-center items-center p-4 m-2 rounded">
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-red-800 font-bol text-center self-center" style={{ fontFamily: 'Prism'}}>STUFF</h1>
@@ -94,23 +130,38 @@ export default function Home() {
 
       </div>
 
-      <div className="Actions flex flex-col xl:w-1/4 lg:w-1/5 md:w-1/6 sm:w-1/7 w-1/8 xl:gap-10 lg:gap-8 md:gap-6 sm:gap-4 gap-2 items-center p-4 lx:mx-50 lg:mx-40 md:mx-30 sm:mx-20 mx-10 lx:my-25 lg:my-20 md:my-15 sm:my-10 bg-gray-900/75 rounded">
-        {/* Render the SearchBar Component here */}
-        <div className="SearchBar flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
-          <SearchBar /> {/* This is where the SearchBar is now being rendered */}
+
+
+      {/*Verticle Layout containing all action buttons*/}
+
+      <div className="Actions flex flex-col xl:w-1/4 lg:w-1/5 md:w-1/6 sm:w-1/7 w-1/8 xl:gap-10 lg:gap-8 md:gap-6 sm:gap-4 gap-2 items-center p-4 lx:mx-50 lg:mx-40 md:mx-30 sm:mx-20 mx-10 lx:my-25 lg:my-20 md:my-15 sm:my-10 bg-gray-900/75  rounded">
+
+        
+        {/*Search button*/}
+        
+        <div className="Logout flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
+          
+          <button className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >Search</button>
+
         </div>
+
+        {/*Create Group button*/}
 
         <div className="Logout flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
           
-          <button className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >Create Group</button>
+          <button onClick={handleCreateGroup} className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >Create Group</button>
 
         </div>
+
+        {/*View Group button*/}
 
         <div className="Logout flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
           
-          <button className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >View Groups</button>
+          <button onClick={handleViewGroup} className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >View Groups</button>
 
         </div>
+
+        {/*Messages Button*/}
 
         <div className="Logout flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
           

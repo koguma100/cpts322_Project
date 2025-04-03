@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase'; // Ensure this is correct
 import { useRouter } from 'next/router';
+import Image from "next/image";
 
 export default function EditProfile() {
     const [user, setUser] = useState(null);
@@ -29,6 +30,22 @@ export default function EditProfile() {
                 setLocation(profile?.location || '');
                 setProfilePic(profile?.profilePicture || '');
             }
+            const checkUser = async () => {
+                const { data, error} = await supabase.auth.getSession()
+          
+                if (error) {
+                  // Safely check for error before accessing message
+                  console.error("Error fetching user:", error?.message);
+                  router.push("/login");
+                } else if (!data?.session?.user) {
+                  router.push("/login"); // If no user in session, redirect to login
+                } else {
+                  setUser(data.session.user); // The user object is in data.session.user
+                }
+          
+              };
+          
+            checkUser();
         }
         fetchUser();
     }, []);
@@ -83,66 +100,83 @@ export default function EditProfile() {
     };
 
     return (
-        <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
+        <div className="bg-gray-800 bg-opacity-100 max-w-lg mx-auto mt-10 p-6 rounded-lg">
+                <Image
+                  src ="/Images/LEBRON.jpg"
+                  alt="Background"
+                  layout="fill"
+                  objectFit="cover"
+                  quality={100}
+                  className="z-[-1] opacity-90"
+                  />
+            <h2 className="block text-gray-400 text-center text-2xl font-bold mb-4">Edit Profile</h2>
             <form onSubmit={(e) => e.preventDefault()}>
                 <div className="mb-4">
-                    <label className="block text-gray-700">Username</label>
+                    <label className="block text-gray-400">Username</label>
                     <input
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-full p-2 border rounded-md"
+                        className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
                     />
                 </div>
+
                 <div className="mb-4">
-                    <label className="block text-gray-700">Date of Birth</label>
+                    <label className="block text-gray-400">Date of Birth</label>
                     <input
                         type="date"
                         value={dob}
                         onChange={(e) => setDob(e.target.value)}
-                        className="w-full p-2 border rounded-md"
+                        className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
                     />
                 </div>
+
                 <div className="mb-4">
-                    <label className="block text-gray-700">Bio</label>
+                    <label className="block text-gray-400">Bio</label>
                     <textarea
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
-                        className="w-full p-2 border rounded-md"
+                        className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
                     />
                 </div>
+
                 <div className="mb-4">
-                    <label className="block text-gray-700">Location</label>
+                    <label className="block text-gray-400">Location</label>
                     <input
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        className="w-full p-2 border rounded-md"
+                        className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
                     />
                 </div>
+
                 <div className="mb-4">
-                    <label className="block text-gray-700">Profile Picture</label>
+                    <label className="block text-gray-400">Profile Picture</label>
                     <input
                         type="file"
                         accept="image/*"
                         onChange={handleImageChange}
-                        className="w-full p-2 border rounded-md"
+                        className="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-700"
                     />
                     {profilePic && <img src={profilePic} alt="Profile" className="mt-2 w-24 h-24 rounded-full" />}
                 </div>
-                <button
-                    type="button"
-                    onClick={handleProfilePicUpload}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    >Save Changes
-                </button>
-                <button
-                    type="button"
-                    onClick={() => router.push('/signup')}
-                    className="px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-blue-600"
-                >Home
-                </button>
+
+                
+
+                <div className="flex justify-between w-full">
+                    <button
+                        type="button"
+                        onClick={handleProfilePicUpload}
+                        className="px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900"
+                        >Save Changes
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => router.push('/signup')}
+                        className="px-3 py-2 bg-red-800 text-white rounded-lg hover:bg-red-900"
+                        >Home
+                    </button>
+                </div>
             </form>
         </div>
     );
