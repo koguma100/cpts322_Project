@@ -1,21 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../utils/supabase';
+import Image from 'next/image';
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [sport, setSport] = useState(null);
-  const [group, setGroup] = useState(null);
+  const [groups, setGroups] = useState([]); // Change to an array to hold multiple groups
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const router = useRouter();
-  const { id } = router.query;  // Get user id from query parameters
-
-  console.log("ID from query:", id); // Log the id to see if it's being passed correctly
+  const { id } = router.query;
 
   useEffect(() => {
-    if (!id) return;  // Ensure id exists
+    if (!id) return;
 
     const fetchUserData = async () => {
-      // Fetch user profile from 'profile' table using the user id
+      setLoading(true);
+      setError(null); // Reset error state
+
+      // Fetch user profile
       const { data: userData, error: userError } = await supabase
         .from('profile')
         .select('*')
@@ -23,13 +27,20 @@ export default function ProfilePage() {
         .single();
 
       if (userError) {
-        console.error('Error fetching user:', userError.message);
+        setError('Error fetching user: ' + userError.message);
+        setLoading(false);
         return;
       }
 
-      setUser(userData);  // Set user data
+      if (!userData) {
+        setError('User not found');
+        setLoading(false);
+        return;
+      }
 
-      // Fetch associated sport from 'userSport' table using the user's id
+      setUser(userData);
+
+      // Fetch associated sport
       const { data: sportData, error: sportError } = await supabase
         .from('userSport')
         .select('sport')
@@ -38,40 +49,55 @@ export default function ProfilePage() {
 
       if (sportError) {
         console.error('Error fetching sport:', sportError.message);
-        return;
       }
 
-      setSport(sportData?.sport || "Not specified");  // Set sport or default
+      setSport(sportData?.sport || "Not specified");
 
-      // Fetch associated group from 'group' table using the user's id
+      // Fetch groups the user is a member of
       const { data: groupData, error: groupError } = await supabase
-        .from('group')
-        .select('name')
-        .eq('user_id', id)
-        .single();
+        .from('groupMember')
+        .select('group(name)') // Assuming 'group' is the foreign key to the group table
+        .eq('user_id', id);
 
       if (groupError) {
-        console.error('Error fetching group:', groupError.message);
-        return;
+        console.error('Error fetching groups:', groupError.message);
       }
 
-      setGroup(groupData?.name || "Not specified");  // Set group or default
+      // Set groups, mapping to get group names
+      setGroups(groupData?.map(g => g.group.name) || []); // Extract group names
+      setLoading(false);
     };
 
     fetchUserData();
-  }, [id]);  // Re-run the effect when the user id changes
+  }, [id]);
 
-  if (!user) {
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   return (
     <div>
       <h1>{user.username}'s Profile</h1>
+      {user.profilePicture ? (
+        <Image
+          src={user.profilePicture}
+          alt={`${user.username}'s profile picture`}
+          width={150}
+          height={150}
+          className="rounded-full"
+        />
+      ) : (
+        <div className="rounded-full bg-gray-300 w-36 h-36 flex items-center justify-center">
+          <span>No Image</span>
+        </div>
+      )}
       <p>Bio: {user.bio}</p>
-      <p>Sport: {sport}</p> {/* Display sport */}
-      <p>Group: {group}</p> {/* Display group */}
-      {/* Render other user information as needed */}
+      <p>Sport: {sport}</p>
+      <p>Groups: {groups.length > 0 ? groups.join(', ') : "Not a member of any groups"}</p>
     </div>
   );
 }
