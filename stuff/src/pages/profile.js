@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../utils/supabase';
 import Image from 'next/image';
+import "../app/globals.css";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -80,24 +81,34 @@ export default function ProfilePage() {
   }
 
   return (
-    <div>
-      <h1>{user.username}'s Profile</h1>
-      {user.profilePicture ? (
-        <Image
-          src={user.profilePicture}
-          alt={`${user.username}'s profile picture`}
-          width={150}
-          height={150}
-          className="rounded-full"
-        />
-      ) : (
-        <div className="rounded-full bg-gray-300 w-36 h-36 flex items-center justify-center">
-          <span>No Image</span>
-        </div>
-      )}
-      <p>Bio: {user.bio}</p>
-      <p>Sport: {sport}</p>
-      <p>Groups: {groups.length > 0 ? groups.join(', ') : "Not a member of any groups"}</p>
+    <div className="relative h-screen">
+      <Image
+        src="/Images/Profileback.jpg"
+        alt="Profile Background"
+        layout="fill"
+        objectFit="cover"
+        quality={100}
+        className="z-[-1]"
+      />
+      <div className="bg-black bg-opacity-50 p-6 rounded-lg relative z-10 flex flex-col items-center justify-center h-full">
+        <h1 className="text-white text-3xl mb-4">{user.username}'s Profile</h1>
+        {user.profilePicture ? (
+          <Image
+            src={user.profilePicture}
+            alt={`${user.username}'s profile picture`}
+            width={150}
+            height={150}
+            className="rounded-full mb-4"
+          />
+        ) : (
+          <div className="rounded-full bg-gray-300 w-36 h-36 flex items-center justify-center mb-4">
+            <span>No Image</span>
+          </div>
+        )}
+        <p className="text-white mb-2">Bio: {user.bio}</p>
+        <p className="text-white mb-2">Sport: {sport}</p>
+        <p className="text-white">Groups: {groups.length > 0 ? groups.join(', ') : "Not a member of any groups"}</p>
+      </div>
     </div>
   );
 }
