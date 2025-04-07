@@ -38,6 +38,22 @@ export default function Home() {
     }
   };
 
+  const handleCreateGroup = () => {
+
+    router.push("/createGroup");
+
+  }
+
+  const handleEditProfile = () => {
+    router.push("/editProfile");
+  }
+  
+  const handleViewGroup = () => {
+
+    router.push("/viewGroup");
+
+  }
+
   return (
     <div className="MainPage">
     <Image
@@ -76,13 +92,11 @@ export default function Home() {
           <div className="Logout flex justify-center items-center w-1/2 bg-red-800 hover:bg-red-900 rounded">
           
           <button className="text-base text-center text-white">Edit Profile</button>
+            <button onClick={handleEditProfile} className="text-base text-center text-white">Edit Profile</button>
 
           </div>
 
         </div>
-
-
-
 
         </div>
 
@@ -102,13 +116,13 @@ export default function Home() {
 
         <div className="Logout flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
           
-          <button className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >Create Group</button>
+          <button onClick={handleCreateGroup} className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >Create Group</button>
 
         </div>
 
         <div className="Logout flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
           
-          <button className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >View Groups</button>
+          <button onClick={handleViewGroup} className="xl:text-xl lg:text-xl md:text-lg sm:text-base text-sm text-center text-white" >View Groups</button>
 
         </div>
 
