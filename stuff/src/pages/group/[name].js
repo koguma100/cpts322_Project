@@ -6,57 +6,49 @@ import Image from "next/image";
 
 export default function GroupPage() {
     const router = useRouter();
-    const { name } = router.query; // Get the group name from the URL
+    const { name } = router.query;
     const [groupData, setGroupData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [members, setMembers] = useState([]);
     const [user, setUser] = useState(null);
     const [profiles, setProfiles] = useState([]);
     const [processedMembers, setProcessedMembers] = useState([]);
-
+    const [confirmLeave, setConfirmLeave] = useState(false);
 
     useEffect(() => {
-
-
         const checkUser = async () => {
-            const { data, error } = await supabase.auth.getSession()
-
+            const { data, error } = await supabase.auth.getSession();
             if (error) {
-                // Safely check for error before accessing message
                 console.error("Error fetching user:", error?.message);
                 router.push("/login");
             } else if (!data?.session?.user) {
-                router.push("/login"); // If no user in session, redirect to login
+                router.push("/login");
             } else {
-                setUser(data.session.user); // The user object is in data.session.user
+                setUser(data.session.user);
             }
-
         };
 
-        const fetchMembers = async () => { //fetch members of group
+        const fetchMembers = async () => {
             setLoading(true);
             const { data, error } = await supabase
                 .from("groupMember")
                 .select("*")
                 .eq("group", name);
-        
             if (error) {
                 console.error("Error fetching members:", error);
             } else {
                 setMembers(data);
-        }
-        setLoading(false);
+            }
+            setLoading(false);
         };
 
-
-        const fetchGroupData = async () => { //fetch group's info 
+        const fetchGroupData = async () => {
             setLoading(true);
             const { data, error } = await supabase
                 .from("group")
                 .select("*")
                 .eq("name", name)
                 .single();
-
             if (error) {
                 console.error("Error fetching group:", error);
             } else {
@@ -65,69 +57,70 @@ export default function GroupPage() {
             setLoading(false);
         };
 
+        checkUser();
         fetchMembers();
         fetchGroupData();
     }, [name]);
-    
-    useEffect(() => {
 
-        const fetchProfiles = async () => { //fetch members of group's profiles for username
+    useEffect(() => {
+        const fetchProfiles = async () => {
             setLoading(true);
             const { data, error } = await supabase
                 .from("profile")
                 .select("*")
-                .in("id", (members.map((groupMember) => groupMember.user_id)))
-        
+                .in("id", members.map((groupMember) => groupMember.user_id));
             if (error) {
-                console.error("Error fetching members:", error);
+                console.error("Error fetching profiles:", error);
             } else {
                 setProfiles(data);
-        }
-        setLoading(false);
+            }
+            setLoading(false);
         };
 
-        
-        fetchProfiles();
+        if (members.length > 0) {
+            fetchProfiles();
+        }
     }, [members]);
 
     useEffect(() => {
         if (members.length > 0 && profiles.length > 0) {
-            const mergedMembers = members.map((member) => {  //Combines each user's profile with their member profile ...
-                const profile = profiles.find((p) => p.id === member.user_id);     //so that isLeader and username can both be found
+            const merged = members.map((member) => {
+                const profile = profiles.find((p) => p.id === member.user_id);
                 return {
                     user_id: member.user_id,
-                    username: profile ? profile.email : "Unknown", // Displays "Unknown" if profile is unable to be found for member
-                    isLeader: member.isLeader, 
+                    username: profile ? profile.email : "Unknown",
+                    isLeader: member.isLeader,
                 };
             });
-    
-            setProcessedMembers(mergedMembers); // Save processed members to state
+            setProcessedMembers(merged);
         }
     }, [members, profiles]);
 
+    const confirmLeaveGroup = async () => {
+        if (!user) return;
 
-    
+        const { error } = await supabase
+            .from("groupMember")
+            .delete()
+            .match({ user_id: user.id, group: name });
 
-    if (loading) return <p className="text-center text-gray-400">Loading group...</p>; //ensures group and member data is loaded before returning screen
+        if (error) {
+            console.error("Error leaving group:", error);
+            return;
+        }
+
+        router.push("/viewGroup");
+    };
+
+    if (loading) return <p className="text-center text-gray-400">Loading group...</p>;
     if (!groupData) return <p className="text-center text-red-500">Group not found</p>;
 
-
-
-
-   
-
-    
-    return (    
+    return (
         <div 
             className="relative min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6"
             style={{ backgroundImage: "url('/Images/LEBRON.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
         >
-           
-    
-            {/* Main Content Box */}
             <div className="relative z-10 max-w-lg w-full bg-gray-800 bg-opacity-90 p-8 rounded-xl shadow-lg text-center">
-                
-                {/* Group Image */}
                 <div className="flex justify-center">
                     {groupData.image ? (
                         <img
@@ -141,53 +134,72 @@ export default function GroupPage() {
                         </div>
                     )}
                 </div>
-    
-                {/* Group Name & Details */}
+
                 <h1 className="text-4xl font-bold text-red-700 mt-4">{groupData.name}</h1>
                 <p className="mt-2 text-gray-300">{groupData.description}</p>
                 <p className="mt-2 text-gray-400">Sport: {groupData.sport}</p>
                 <p className="mt-2 text-gray-400">Location: {groupData.location}</p>
-    
-                {/* Members Section */}
+                <p className="mt-2 text-gray-400">Visibility: {groupData.public ? "Public" : "Private"}</p>
+
                 <h2 className="text-2xl font-bold mt-6 mb-4 text-red-500">Group Members</h2>
-    
                 <div className="flex flex-col gap-2">
                     {processedMembers.length === 0 ? (
-
-                    <p className="text-gray-400">No Members.</p>
-
-                    ) : ( //for each member
-                            
-                             processedMembers.map((member) => (
+                        <p className="text-gray-400">No Members.</p>
+                    ) : (
+                        processedMembers.map((member) => (
                             <p
                                 key={member.user_id}
                                 className="bg-red-800 hover:bg-red-900 text-white py-2 px-4 rounded transition font-semibold flex justify-between items-center"
-                                onClick={() => router.push(`/profile?id=${member.user_id}`)} // Redirect to member's profile
+                                onClick={() => router.push(`/profile?id=${member.user_id}`)}
                             >
-                                {/* Username */}
-                            <span>{member.username}</span> 
-
-                                {/* Is leader */}
-                            {member.isLeader && (
-
-                                <span className="ml-2 text-white font-bold">(Leader)</span>
-
-                            )}
+                                <span>{member.username}</span>
+                                {member.isLeader && (
+                                    <span className="ml-2 text-white font-bold">(Leader)</span>
+                                )}
                             </p>
                         ))
                     )}
                 </div>
 
-    
-                {/* Back Button */}
-                <button
-                    className="mt-6 bg-red-700 hover:bg-red-800 text-white px-6 py-2 rounded transition"
-                    onClick={() => router.push("/viewGroup")}
-                >
-                    Back to Groups
-                </button>
+                {/* Button Row */}
+                <div className="flex justify-between items-center mt-6">
+                    {/* Leave Group Button (Red) */}
+                    {!confirmLeave ? (
+                        <button
+                            className="bg-red-800 hover:bg-red-900 text-white px-6 py-2 rounded transition"
+                            onClick={() => setConfirmLeave(true)}
+                        >
+                            Leave Group
+                        </button>
+                    ) : (
+                        <div className="flex flex-col items-start text-left">
+                            <p className="text-gray-300 mb-2">Are you sure you want to leave this group?</p>
+                            <div className="flex gap-3">
+                                <button
+                                    className="bg-red-800 hover:bg-red-900 text-white px-4 py-2 rounded transition"
+                                    onClick={confirmLeaveGroup}
+                                >
+                                    Yes, Leave
+                                </button>
+                                <button
+                                    className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded transition"
+                                    onClick={() => setConfirmLeave(false)}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Back to Groups Button (Clear) */}
+                    <button
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded transition"
+                        onClick={() => router.push("/viewGroup")}
+                    >
+                        Back to Groups
+                    </button>
+                </div>
             </div>
         </div>
     );
-    
 }
