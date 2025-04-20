@@ -11,6 +11,7 @@ export default function CreateGroup() {
         description: "",
         sport: "",
         location: "",
+        public: true,
     });
     const [image, setImage] = useState(null);
     const [sportsOptions, setSportsOptions] = useState([]);
@@ -100,7 +101,8 @@ export default function CreateGroup() {
                 description: description,
                 sport: sport,
                 location: location,
-                image: imageUrl, // If an image was uploaded, add the URL
+                image: imageUrl,
+                public: formData.public,
             },
         ]);
 
@@ -239,6 +241,22 @@ export default function CreateGroup() {
                         required
                         className="w-full p-2 mt-1 bg-gray-700 border border-gray-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-red-700"
                     />
+                </label>
+
+                {/* Group Visibility */}
+                <label className="block mb-4">
+                    Group Visibility
+                    <select
+                    name="public"
+                    value={formData.public ? "true" : "false"}
+                    onChange={(e) =>
+                        setFormData({ ...formData, public: e.target.value === "true" })
+                    }
+                    className="w-full p-2 mt-1 bg-gray-700 border border-gray-600 text-white rounded focus:outline-none focus:ring-2 focus:ring-red-700"
+                    >
+                        <option value="true">Public</option>
+                        <option value="false">Private</option>
+                        </select>
                 </label>
 
                 <div className="flex justify-between items-center mb-4 space-x-4">
