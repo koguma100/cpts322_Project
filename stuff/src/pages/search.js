@@ -16,12 +16,10 @@ export default function SearchPage() {
 
       let baseQuery = supabase.from("profile").select("id, username");
 
-      // Apply username filter (check for not null)
       if (searchQuery) {
         baseQuery = baseQuery.ilike("username", `%${searchQuery}%`);
       }
 
-      // Apply sport filter
       if (sport) {
         const { data: sportUsers } = await supabase
           .from("userSport")
@@ -32,7 +30,6 @@ export default function SearchPage() {
         baseQuery = baseQuery.in("id", userIds);
       }
 
-      // Apply group filter
       if (group) {
         const { data: groupUsers } = await supabase
           .from("groupMember")
@@ -43,9 +40,7 @@ export default function SearchPage() {
         baseQuery = baseQuery.in("id", userIds);
       }
 
-      // Fetch data with additional filter to exclude NULL profiles
-      const { data, error } = await baseQuery
-        .not("username", "is", null)  // Filter out profiles with NULL usernames
+      const { data, error } = await baseQuery.not("username", "is", null);
 
       if (error) {
         console.error("Search error:", error.message);
@@ -64,17 +59,24 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6 relative">
+
+      {/* Back to Home Button */}
+      <button
+        onClick={() => router.push("/home")}
+        className="absolute top-6 left-6 bg-red-800 hover:bg-red-900 text-white font-semibold py-2 px-4 rounded shadow transition"
+      >
+        ← Back to Home
+      </button>
+
       <h1 className="text-3xl font-bold mb-4 text-center">Find Users</h1>
 
-      {/* Search Bar with filters */}
       <div className="flex justify-center mb-6">
         <div className="w-full max-w-4xl">
           <SearchBar />
         </div>
       </div>
 
-      {/* Search Results */}
       <div className="max-w-3xl mx-auto">
         {loading && <p className="text-center">Loading...</p>}
 
