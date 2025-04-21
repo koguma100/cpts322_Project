@@ -149,7 +149,7 @@ export default function GroupPage() {
                         processedMembers.map((member) => (
                             <p
                                 key={member.user_id}
-                                className="bg-red-800 hover:bg-red-900 text-white py-2 px-4 rounded transition font-semibold flex justify-between items-center"
+                                className="bg-red-800 hover:bg-red-900 text-white py-2 px-4 rounded transition font-semibold flex justify-between items-center cursor-pointer"
                                 onClick={() => router.push(`/profile?id=${member.user_id}`)}
                             >
                                 <span>{member.username}</span>
@@ -162,8 +162,8 @@ export default function GroupPage() {
                 </div>
 
                 {/* Button Row */}
-                <div className="flex justify-between items-center mt-6">
-                    {/* Leave Group Button (Red) */}
+                <div className="flex flex-wrap justify-between items-center mt-6 gap-4">
+                    {/* Leave Group Button */}
                     {!confirmLeave ? (
                         <button
                             className="bg-red-800 hover:bg-red-900 text-white px-6 py-2 rounded transition"
@@ -191,7 +191,34 @@ export default function GroupPage() {
                         </div>
                     )}
 
-                    {/* Back to Groups Button (Clear) */}
+                    {/* Join Group Button (only shows if public and user isn't already a member) */}
+                    {groupData.public && !processedMembers.some(m => m.user_id === user?.id) && (
+                        <button
+                            onClick={async () => {
+                                if (!user) return;
+
+                                const { error } = await supabase.from("groupMember").insert([
+                                    {
+                                        user_id: user.id,
+                                        group: name,
+                                        isLeader: false,
+                                    },
+                                ]);
+
+                                if (error) {
+                                    console.error("Error joining group:", error);
+                                    alert("Failed to join group.");
+                                } else {
+                                    router.reload();
+                                }
+                            }}
+                            className="bg-green-700 hover:bg-green-800 text-white px-6 py-2 rounded transition"
+                        >
+                            Join Group
+                        </button>
+                    )}
+
+                    {/* Back Button */}
                     <button
                         className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded transition"
                         onClick={() => router.back()}
