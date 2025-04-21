@@ -71,6 +71,11 @@ export default function Home() {
           </button>
         </div>
         <div className="flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
+          <button onClick={() => router.push("/searchGroup")} className="text-white">
+            Search for Groups
+          </button>
+        </div>
+        <div className="flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
           <button onClick={() => router.push("/createGroup")} className="text-white">
             Create Group
           </button>

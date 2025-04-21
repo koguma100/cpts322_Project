@@ -194,9 +194,9 @@ export default function GroupPage() {
                     {/* Back to Groups Button (Clear) */}
                     <button
                         className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded transition"
-                        onClick={() => router.push("/viewGroup")}
+                        onClick={() => router.back()}
                     >
-                        Back to Groups
+                        Back
                     </button>
                 </div>
             </div>
