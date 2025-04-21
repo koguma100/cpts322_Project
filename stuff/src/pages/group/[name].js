@@ -162,6 +162,7 @@ export default function GroupPage() {
                             <p
                                 key={member.user_id}
                                 className="bg-red-800 hover:bg-red-900 text-white py-2 px-4 rounded transition font-semibold flex justify-between items-center"
+                                onClick={() => router.push(`/profile?id=${member.user_id}`)} // Redirect to member's profile
                             >
                                 {/* Username */}
                             <span>{member.username}</span> 
