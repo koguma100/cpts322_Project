@@ -81,17 +81,19 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="relative h-screen">
+    <div className="relative min-h-screen flex items-center justify-center">
       <Image
-        src="/Images/Profileback.jpg"
-        alt="Profile Background"
+        src="/Images/LEBRON.jpg"
+        alt="Background"
         layout="fill"
         objectFit="cover"
         quality={100}
-        className="z-[-1]"
+        className="z-[-1] opacity-40"
       />
-      <div className="bg-black bg-opacity-50 p-6 rounded-lg relative z-10 flex flex-col items-center justify-center h-full">
+      
+      <div className="relative z-10 max-w-lg w-full p-6 bg-gray-900 bg-opacity-75 text-white rounded-lg shadow-lg border-2 border-gray-600 flex flex-col items-center">
         <h1 className="text-white text-3xl mb-4">{user.username}'s Profile</h1>
+  
         {user.profilePicture ? (
           <Image
             src={user.profilePicture}
@@ -101,14 +103,25 @@ export default function ProfilePage() {
             className="rounded-full mb-4"
           />
         ) : (
-          <div className="rounded-full bg-gray-300 w-36 h-36 flex items-center justify-center mb-4">
+          <div className="rounded-full bg-gray-300 w-36 h-36 flex items-center justify-center mb-4 text-black font-semibold">
             <span>No Image</span>
           </div>
         )}
-        <p className="text-white mb-2">Bio: {user.bio}</p>
-        <p className="text-white mb-2">Sport: {sport}</p>
-        <p className="text-white">Groups: {groups.length > 0 ? groups.join(', ') : "Not a member of any groups"}</p>
+  
+        <p className="mb-2">Bio: {user.bio}</p>
+        <p className="mb-2">Sport: {sport}</p>
+        <p>
+          Groups: {groups.length > 0 ? groups.join(', ') : "Not a member of any groups"}
+          
+        </p>
+          {/* Back Button */}
+        <button
+          onClick={() => router.back()}
+          className="mt-6 bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-800 transition z-10"
+        >
+          Back
+        </button>
       </div>
     </div>
-  );
+  );  
 }
