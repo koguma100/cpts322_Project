@@ -220,6 +220,18 @@ export default function GroupPage() {
                         </button>
                     )}
 
+                    {/* Group Chat Link - Only show if in group */}
+                    {groupData.public && processedMembers.some(m => m.user_id === user?.id) && (
+                    <div className="">
+                        <button
+                            onClick={() => router.push(`/groupChat?group=${name}`)}
+                            className="bg-red-800 hover:bg-red-900 text-white px-6 py-2 rounded transition"
+                        >
+                            Go to Group Chat
+                        </button>
+                    </div>
+                    )}
+
                     {/* Back Button */}
                     <button
                         className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded transition"
