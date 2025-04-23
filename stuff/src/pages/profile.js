@@ -7,6 +7,7 @@ import "../app/globals.css";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
+  const [userCur, setUserCur] = useState(null);
   const [sport, setSport] = useState(null);
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +21,16 @@ export default function ProfilePage() {
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
+
+      const checkUser = async () => {
+        const { data, error } = await supabase.auth.getSession();
+        if (error || !data?.session?.user) {
+          router.push("/login");
+        } else {
+          setUserCur(data.session.user);
+        }
+      };
+      checkUser();
 
       const { data: userData, error: userError } = await supabase
         .from('profile')
@@ -55,8 +66,14 @@ export default function ProfilePage() {
     fetchUserData();
   }, [id]);
 
-  if (loading) return <div className="text-white p-8">Loading...</div>;
-  if (error) return <div className="text-red-500 p-8">Error: {error}</div>;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-black">
@@ -109,15 +126,42 @@ export default function ProfilePage() {
               <p className="text-gray-400">Not a member of any groups</p>
             )}
           </div>
+        
+  
+        <p className="mb-2">Bio: {user.bio}</p>
+        <p className="mb-2">Sport: {sport}</p>
+        <p>
+          Groups: {groups.length > 0 ? groups.join(', ') : "Not a member of any groups"}
+          
+        </p>
+          {/* Invite & Back Buttons */}
+          <div className="flex gap-4 mt-4">
+            
+            {user.id != userCur.id &&
+            
+            <button
+              onClick={() => router.push({
+                pathname: "/viewGroup",
+                query: { from: 'profile',
+                  inviterId: user.id 
+                 }
+              })}
+              className="bg-green-700 hover:bg-green-800 text-white py-2 px-4 rounded transition"
+            >
+              Invite
+            </button>
 
-          <button
-            onClick={() => router.back()}
-            className="mt-6 bg-red-600 hover:bg-red-700 transition px-6 py-2 rounded-full text-white font-semibold"
-          >
-            ← Back
-          </button>
-        </div>
+            }
+
+            <button
+              onClick={() => router.push("/home")}
+              className="w-full bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded transition"
+            >
+              Back to Home
+            </button>
+          </div>
       </div>
+    </div>
     </div>
   );
 }
