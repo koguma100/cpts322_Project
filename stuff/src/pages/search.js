@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../utils/supabase";
 import SearchBar from "./searchBar";
+import "../app/globals.css";
 
 export default function SearchPage() {
   const router = useRouter();

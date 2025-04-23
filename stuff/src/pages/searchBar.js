@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../utils/supabase";
+import "../app/globals.css";
 
 export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");

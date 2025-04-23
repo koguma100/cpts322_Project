@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { supabase } from '../utils/supabase';
 import { useState, useEffect } from 'react';
+import "../app/globals.css";
 
 export default function index() {
     const router = useRouter();

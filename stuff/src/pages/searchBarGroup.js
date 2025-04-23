@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../utils/supabase";
+import "../app/globals.css";
 
 export default function SearchBarGroup() {
   const [groupName, setGroupName] = useState("");
