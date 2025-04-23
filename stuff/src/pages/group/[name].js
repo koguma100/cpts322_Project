@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function GroupPage() {
     const router = useRouter();
-    const { name } = router.query;
+    const { name, inviteToken } = router.query;
     const [groupData, setGroupData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [members, setMembers] = useState([]);
@@ -95,6 +95,8 @@ export default function GroupPage() {
             setProcessedMembers(merged);
         }
     }, [members, profiles]);
+
+
 
     const confirmLeaveGroup = async () => {
         if (!user) return;
@@ -191,8 +193,8 @@ export default function GroupPage() {
                         </div>
                     )}
 
-                    {/* Join Group Button (only shows if public and user isn't already a member) */}
-                    {groupData.public && !processedMembers.some(m => m.user_id === user?.id) && (
+                    {/* Join Group Button (only shows if public and user isn't already a member or if user recieved invite) */}
+                    {(groupData.public || inviteToken) && !processedMembers.some(m => m.user_id === user?.id) && (
                         <button
                             onClick={async () => {
                                 if (!user) return;
