@@ -126,7 +126,7 @@ export default function ProfilePage() {
               <p className="text-gray-400">Not a member of any groups</p>
             )}
           </div>
-        )}
+        
   
         <p className="mb-2">Bio: {user.bio}</p>
         <p className="mb-2">Sport: {sport}</p>
@@ -161,6 +161,7 @@ export default function ProfilePage() {
             </button>
           </div>
       </div>
+    </div>
     </div>
   );
 }
