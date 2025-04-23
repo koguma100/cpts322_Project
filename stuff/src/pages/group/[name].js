@@ -88,7 +88,7 @@ export default function GroupPage() {
                 const profile = profiles.find((p) => p.id === member.user_id);
                 return {
                     user_id: member.user_id,
-                    username: profile ? profile.email : "Unknown",
+                    username: profile ? profile.username : "Unknown",
                     isLeader: member.isLeader,
                 };
             });
