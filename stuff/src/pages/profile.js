@@ -6,6 +6,7 @@ import "../app/globals.css";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
+  const [userCur, setUserCur] = useState(null);
   const [sport, setSport] = useState(null);
   const [groups, setGroups] = useState([]); // Change to an array to hold multiple groups
   const [loading, setLoading] = useState(true);
@@ -19,6 +20,18 @@ export default function ProfilePage() {
     const fetchUserData = async () => {
       setLoading(true);
       setError(null); // Reset error state
+
+
+
+      const checkUser = async () => {
+        const { data, error } = await supabase.auth.getSession();
+        if (error || !data?.session?.user) {
+          router.push("/login");
+        } else {
+          setUserCur(data.session.user);
+        }
+      };
+      checkUser();
 
       // Fetch user profile
       const { data: userData, error: userError } = await supabase
@@ -72,6 +85,8 @@ export default function ProfilePage() {
     fetchUserData();
   }, [id]);
 
+  
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -114,13 +129,32 @@ export default function ProfilePage() {
           Groups: {groups.length > 0 ? groups.join(', ') : "Not a member of any groups"}
           
         </p>
-          {/* Back Button */}
-        <button
-          onClick={() => router.back()}
-          className="mt-6 bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-800 transition z-10"
-        >
-          Back
-        </button>
+          {/* Invite & Back Buttons */}
+          <div className="flex gap-4 mt-4">
+            
+            {user.id != userCur.id &&
+            
+            <button
+              onClick={() => router.push({
+                pathname: "/viewGroup",
+                query: { from: 'profile',
+                  inviterId: user.id 
+                 }
+              })}
+              className="bg-green-700 hover:bg-green-800 text-white py-2 px-4 rounded transition"
+            >
+              Invite
+            </button>
+
+            }
+
+            <button
+              onClick={() => router.push("/home")}
+              className="w-full bg-gray-700 hover:bg-gray-800 text-white py-2 px-4 rounded transition"
+            >
+              Back to Home
+            </button>
+          </div>
       </div>
     </div>
   );  
