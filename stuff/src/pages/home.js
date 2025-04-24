@@ -86,9 +86,6 @@ export default function Home() {
             View Groups
           </button>
         </div>
-        <div className="flex justify-center items-center w-full bg-red-800 hover:bg-red-900 p-2 rounded">
-          <button className="text-white">Messages</button>
-        </div>
       </div>
     </div>
   );
