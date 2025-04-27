@@ -6,7 +6,7 @@ Project for CPTS 322 (Software Engineering Principles) - Made with Next.js, Reac
 
 Check it out here --> https://stuff-kappa.vercel.app/
 
-##Features:
+## Features:
 
 - Login/ Register
 - Edit Profile
